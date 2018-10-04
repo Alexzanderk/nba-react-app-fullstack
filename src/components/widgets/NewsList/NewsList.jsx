@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
+import { URL } from '../../../config';
 import './newsList.css';
 
 import Button from '../Button/Button';
