@@ -1,0 +1,42 @@
+.feature_item {
+    position: relative;
+}
+
+.feature_item a {
+    position: absolute;
+    width: 100%;
+    bottom: 30px;
+    text-decoration: none;
+    right: 0px;
+}
+
+.feature_image {
+    height: 330px;
+
+    /* height: 100%; */
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}
+
+.feature_caption {
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    top: 0px;
+    width: 100%;
+    padding: 10px 20px;
+    font-weight: 300;
+    font-size: 28px;
+    box-sizing: border-box;
+}
+
+.dots {
+    bottom: 10px;
+}
+
+.dots button::before {
+    color: #ffffff !important;
+}
+
+.slider_cust {
+    height: 330px;
+}
