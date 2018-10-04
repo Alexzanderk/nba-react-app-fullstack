@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import './videoslist.css';
-import axios from 'axios';
+import { fbVideos, fbTeams, firebaseLooper } from '../../../firebase';
 
-import { URL } from '../../../config';
 import Button from '../Button/Button';
 import VideosListTemplate from './VideosListTemplate';
 
@@ -21,19 +20,23 @@ class VideosList extends Component {
 
     request = (start, end) => {
         if (this.state.teams.length < 1) {
-            axios
-                .get(`${URL}/teams`)
-                .then(res => {
-                    this.setState({ teams: res.data });
-                })
-                .catch(console.error);
+            fbTeams.once('value').then(snapshot => {
+                const teams = firebaseLooper(snapshot);
+                this.setState({
+                    teams
+                });
+            });
         }
 
-        axios
-            .get(`${URL}/videos?_start=${start}&_end=${end}`)
-            .then(res => {
-                this.setState({ 
-                    videos: [...this.state.videos, ...res.data],
+        fbVideos
+            .orderByChild('id')
+            .startAt(start)
+            .endAt(end)
+            .once('value')
+            .then(snapshot => {
+                const videos = firebaseLooper(snapshot);
+                this.setState({
+                    videos: [...this.state.videos, ...videos],
                     start,
                     end
                 });
@@ -53,7 +56,7 @@ class VideosList extends Component {
         let template = null;
         switch (this.props.type) {
             case 'card':
-                template = <VideosListTemplate data={this.state.videos} teams={this.state.teams} />
+                template = <VideosListTemplate data={this.state.videos} teams={this.state.teams} />;
                 break;
 
             default:
@@ -65,7 +68,7 @@ class VideosList extends Component {
 
     loadMore = () => {
         let end = this.state.end + this.props.amount;
-        this.request(this.state.end, end);
+        this.request(this.state.end + 1, end);
     };
 
     renderButton = () => {

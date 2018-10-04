@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { fbTeams, fbArticles, firebaseLooper } from '../../../firebase';
 
-import { URL } from '../../../config';
 import './newsList.css';
 
 import Button from '../Button/Button';
@@ -24,19 +23,22 @@ class NewsList extends Component {
 
     request = (start, end) => {
         if (this.state.teams.length < 1) {
-            axios
-                .get(`${URL}/teams`)
-                .then(res => {
-                    this.setState({ teams: res.data });
-                })
-                .catch(console.error);
-        }
-
-        axios
-            .get(`${URL}/articles?_start=${start}&_end=${end}`)
-            .then(res => {
+            fbTeams.once('value').then(snapshot => {
+                const teams = firebaseLooper(snapshot);
                 this.setState({
-                    items: [...this.state.items, ...res.data],
+                    teams
+                });
+            });
+        }
+        fbArticles
+            .orderByChild('id')
+            .startAt(start)
+            .endAt(end)
+            .once('value')
+            .then(snapshot => {
+                const articles = firebaseLooper(snapshot);
+                this.setState({
+                    items: [...this.state.items, ...articles],
                     start,
                     end
                 });
@@ -46,7 +48,7 @@ class NewsList extends Component {
 
     loadMore = () => {
         let end = this.state.end + this.props.amount;
-        this.request(this.state.end, end);
+        this.request(this.state.end + 1, end);
     };
 
     renderNews = type => {

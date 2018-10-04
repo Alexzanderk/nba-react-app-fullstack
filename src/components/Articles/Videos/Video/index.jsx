@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { URL } from '../../../../config';
-
+import { fbTeams, firebaseDB, firebaseLooper, fbVideos } from '../../../../firebase';
 import '../../articles.css';
 import Header from './Header';
 import VideosRelated from '../../../widgets/VideosList/VideosRelated/VideosRelated';
@@ -15,36 +13,44 @@ class VideoArticle extends Component {
     };
 
     componentWillMount() {
-        axios
-            .get(`${URL}/videos?id=${this.props.match.params.id}`)
-            .then(res => {
-                let article = res.data[0];
-
-                axios.get(`${URL}/teams?id=${article.team}`).then(res => {
-                    this.setState({
-                        article,
-                        team: res.data
+        firebaseDB
+            .ref(`videos/${this.props.match.params.id}`)
+            .once('value')
+            .then(snapshot => {
+                let article = snapshot.val();
+                fbTeams
+                    .orderByChild('id')
+                    .equalTo(article.team)
+                    .once('value')
+                    .then(snapshot => {
+                        const team = firebaseLooper(snapshot);
+                        this.setState({
+                            article,
+                            team
+                        });
+                        this.getRelated();
                     });
-
-                    this.getRelated();
-                });
             })
             .catch(console.error);
     }
 
     getRelated = () => {
-        axios.get(`${URL}/teams`)
-          .then(res => {
-              let  teams = res.data;
+        fbTeams.once('value').then(snapshot => {
+            const teams = firebaseLooper(snapshot);
 
-            axios.get(`${URL}/videos?q=${this.state.team[0].city}&_limit=3`)
-                .then(res => {
+            fbVideos
+                .orderByChild('team')
+                .equalTo(this.state.article.team)
+                .limitToFirst(3)
+                .once('value')
+                .then(snapshot => {
+                    const related = firebaseLooper(snapshot);
                     this.setState({
                         teams,
-                        related: res.data
-                    })
-                })
-        })
+                        related
+                    });
+                });
+        });
     };
 
     render() {
@@ -63,10 +69,7 @@ class VideoArticle extends Component {
                         src={`https://www.youtube.com/embed/${article.url}`}
                     />
                 </div>
-                <VideosRelated 
-                    data={this.state.related}
-                    teams={this.state.teams}
-                />
+                <VideosRelated data={this.state.related} teams={this.state.teams} />
             </div>
         );
     }

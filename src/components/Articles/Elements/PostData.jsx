@@ -1,11 +1,12 @@
 import React from 'react';
+import moment from 'moment';
 
 const PostData = props => {
     return (
         <div className="articlePostData">
             <div>
                 Date:
-                <span>{props.data.date}</span>
+                <span>{moment(props.data.date).format('DD.MM.YYYY')}</span>
             </div>
             <div>
                 Author:
