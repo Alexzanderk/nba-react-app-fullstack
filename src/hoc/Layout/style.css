@@ -4,7 +4,7 @@ body {
     margin: 0;
     background: #ececec;
     font-family: 'Roboto', sans-serif;
-    max-width: 430px;
+    /* max-width: 430px; */
     /* margin: 0 auto; */
 }
 
@@ -17,7 +17,7 @@ a {
     flex-flow: column;
 }
 
-html, body, .layout {
+html, body, {
     min-height: 100vh;
 }
 
@@ -25,6 +25,6 @@ header, footer {
     flex: 0;
 }
 
-.home, .article, .body {
+.home, .article, .body, .layout{
     flex: 1;
 }

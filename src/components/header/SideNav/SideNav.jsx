@@ -15,7 +15,7 @@ const SideNavigation = props => {
                     color: '#dfdfdf'
                 }}
             >
-                <SideNavItem />
+                <SideNavItem {...props} />
             </SideNav>
         </div>
     );

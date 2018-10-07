@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { fbTeams, firebaseLooper, firebaseDB } from '../../../../firebase';
+import { firebase, fbTeams, firebaseLooper, firebaseDB } from '../../../../firebase';
 
 import '../../articles.css';
 import Header from './Header';
@@ -7,7 +7,8 @@ import Header from './Header';
 class NewsArticle extends Component {
     state = {
         article: [],
-        team: []
+        team: [],
+        imageURL: ''
     };
 
     componentWillMount() {
@@ -22,18 +23,34 @@ class NewsArticle extends Component {
                     .once('value')
                     .then(snapshot => {
                         const team = firebaseLooper(snapshot);
+
+                        this.getImageURL(article.image);
+
                         this.setState({
                             article,
                             team
-                        })
-                    })
+                        });
+                    });
             })
             .catch(console.error);
     }
 
+    getImageURL = filename => {
+        firebase
+            .storage()
+            .ref('images')
+            .child(filename)
+            .getDownloadURL()
+            .then(url => {
+                console.log(url)
+                this.setState({ imageURL: url });
+            });
+    };
+
     render() {
         const article = this.state.article;
         const team = this.state.team[0];
+        console.log(this.state)
 
         return (
             <div className="article articleWrapper">
@@ -44,10 +61,15 @@ class NewsArticle extends Component {
                     <div
                         className="articleImage"
                         style={{
-                            background: `url('/images/articles/${article.image}')`
+                            background: `url('${this.state.imageURL}')`
                         }}
                     />
-                    <div className="articleText">{article.body}</div>
+                    <div
+                        className="articleText"
+                        dangerouslySetInnerHTML={{
+                            __html: article.body
+                        }}
+                    />
                 </div>
             </div>
         );

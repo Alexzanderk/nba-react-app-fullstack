@@ -26,7 +26,7 @@ const SliderTemplate = props => {
                             <div
                                 className="feature_image"
                                 style={{
-                                    background: `url(/images/articles/${item.image})`
+                                    background: `url(${item.image})`
                                 }}
                             >
                                 <Link to={`/articles/${item.id}`}>
