@@ -42,7 +42,7 @@ class NewsArticle extends Component {
             .child(filename)
             .getDownloadURL()
             .then(url => {
-                console.log(url)
+                console.log(url);
                 this.setState({ imageURL: url });
             });
     };
@@ -50,10 +50,10 @@ class NewsArticle extends Component {
     render() {
         const article = this.state.article;
         const team = this.state.team[0];
-        console.log(this.state)
+        console.log(this.state);
 
         return (
-            <div className="article articleWrapper">
+            <div className="articleWrapper">
                 <Header teamData={team} date={article.date} author={article.author} />
 
                 <div className="articleBody">

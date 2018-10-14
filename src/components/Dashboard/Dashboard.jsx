@@ -4,7 +4,7 @@ import './dashboard.css';
 import { fbTeams, fbArticles, firebase } from '../../firebase';
 
 import { Editor } from 'react-draft-wysiwyg';
-import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw } from 'draft-js';
 import { stateToHTML } from 'draft-js-export-html';
 
 import Uploader from '../widgets/FileUploader/Uploader';
@@ -166,7 +166,7 @@ class Dashboard extends Component {
                     });
                     dataToSubmit['date'] = firebase.database.ServerValue.TIMESTAMP;
                     dataToSubmit['id'] = articleId + 1;
-                    dataToSubmit['team'] = parseInt(dataToSubmit['team']);
+                    dataToSubmit['team'] = parseInt(dataToSubmit['team'], 10);
 
                     fbArticles
                         .push(dataToSubmit)

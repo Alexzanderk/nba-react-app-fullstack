@@ -66,7 +66,6 @@ const SideNavItem = props => {
                         key={i}
                         className="option"
                         onClick={() => {
-                            props;
                             firebase
                                 .auth()
                                 .signOut()
